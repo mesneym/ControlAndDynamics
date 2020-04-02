@@ -1,0 +1,9 @@
+[1] Config.pm:340> INFO - This is Biber 2.4
+[2] Config.pm:343> INFO - Logfile is 'outline1.blg'
+[66] biber:287> INFO - === Wed Nov 27, 2019, 14:35:07
+[188] Biber.pm:348> INFO - Reading 'outline1.bcf'
+[372] Biber.pm:742> INFO - Found 0 citekeys in bib section 0
+[372] Utils.pm:147> WARN - The file 'outline1.bcf' does not contain any citations!
+[385] bbl.pm:519> INFO - Writing 'outline1.bbl' with encoding 'ascii'
+[388] bbl.pm:615> INFO - Output to outline1.bbl
+[388] Biber.pm:109> INFO - WARNINGS: 1

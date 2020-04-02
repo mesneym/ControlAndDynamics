@@ -1,0 +1,783 @@
+
+\documentclass[journal]{IEEEtran}
+
+% *** CITATION PACKAGES ***
+\usepackage[style=ieee]{biblatex} 
+\bibliography{example_bib.bib}    %your file created using JabRef
+\usepackage {graphicx}
+% *** MATH PACKAGES ***
+\usepackage{amsmath}
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+\usepackage{url}
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+\usepackage{graphicx}  %needed to include png, eps figures
+\usepackage{float}  % used to fix location of images i.e.\begin{figure}[H]
+\usepackage{amssymb}
+\usepackage{inputenc}
+\usepackage[thinc]{esdiff}
+
+\begin{document}
+% paper title
+\title{Delay-dependent Robust Stability Analysis of Power Systems with PID Controller}
+
+% author names 
+\author{ Authors: Eashwar Sathyamurthy  Akwasi A Obeng}
+        
+\markboth{ENPM667 Controls of Robotics Systems. Technical Report 9, November 2019}
+{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for IEEE Journals}
+
+\maketitle
+
+\begin{abstract}
+  This technical report examines the robust stability of a power system, which is based on proportional-integral-derivative load
+frequency control and involves uncertain parameters and time delays. This report examines a power system model which  is transformed into a closed-loop system with feedback control. The purpose of this report is to verify new augmented Lyapunov-Krasovskii (LK)
+functional to employ the new Bessel-Legendre inequality. The new Bessel-Legendre inequality is used to estimate the derivative of the functional to obtain
+a maximum lower bound. This report also verifies and provides a detailed description of stability criterion of the power system obtained by employing the LK functional and Bessel-Legendre inequality. Finally,
+this report validates the proposed method by applying it to practical numerical examples.
+\end{abstract}
+\section{Introduction}
+
+\IEEEPARstart{W}{ith} the growing population, the demand for efficient power systems have increased drastically. Efficient power systems have the characteristics of high stability margin and less time delays. These characteristics are attainable if the operating frequency of the power system fluctuate within a small range of equilibrium value and the load frequency control (LFC) can control these fluctuations. During the process of data transmission, there is always a possiblity of occurance if time delays. These time delays occur randomly which makes it impossible to predict.  Therefore, gaining insights on robust stability of power systems with time delays and uncertain parameters can help to overcome this problem. \\
+
+The most research methods employed in time-delay systems are based on the Lyapunov direct time-domain method. Through the construction of the Lyapunov-Krasovskii (LK) functional, the stability of the system is analyzed with the aid of the Lyapunov stability theory, after which the stability criterion is derived. Finally, the stability margin of the system is obtained by employing the linear matrix inequality (LMI) toolbox.This report aims to improve the upper bound of the time delay of the system by proposing an augmented LK functional and using the Bessel-Legendre inequality to estimate the derivative of the functional. This study assumes that the forward channel of the controller possesses time delays and the inertia time constant of both the prime mover and speed governor may have uncertain parameters in the system. A time-varying delay power system model is established with uncertain parameters based on proportional-integral-derivative (PID) load frequency control. An appropriate LK functional is constructed, and the robust stability of the system is then analyzed using the Lyapunov stability theory. Finally, the robust stability criterion of the system is obtained by employing the Bessel-Legendre inequality discussed in Ref. [9], and the stability margin that the system can withstand is solved using an LMI toolbox. The advantages and effectiveness of the proposed method are demonstrated by comparing the results of the proposed method with those of previous methods under the two controller gains.\\
+
+The variables used in this study are defined as follows:
+ $R^n$ and $R^{n*m}$ denote n-dimensional vectors and $n * m$ dimensional matrices in the real number domain, respectively; $R^T$ and $R^-1$ represent the transpose and inverse of a matrix, respectively; I and 0 are identity and zero matrices, respectively;  P  should be greater than 0 means that the matrix P is symmetric and positive; $Sym{X}=X+X^T$; ‘*’ represents symmetric terms in a symmetric matrix; and diag(···) denotes a diagonal matrix. \\
+
+
+\section{Concepts Needed}
+
+\subsection{Legendre Polynomials}
+A brief overview of Legendre polynomials obtained by solving Legendre
+ODE is provided below. \\ 
+
+Legendre ODE is given as follows
+ \begin{equation}
+  (1-x^2)\diff[2]{f}{x} - 2x\diff{f}{x} + k(k+1)y = 0 \\
+\end{equation} \\
+
+Solution to ODE is obtained as follows:
+
+Step 1: Convert Equation to the form shown below
+\begin{equation}
+\diff[2]{f}{x} + p(x)\diff{y}{x}  + q(x)y = G(x)
+\end{equation}
+
+Therefore we have,
+\begin{equation}
+     \diff[2]{f}{x} - \frac{2x}{1-x^2}\diff{f}{x} + \frac{k(k+1)}{1-x^2}y = 0
+\end{equation}
+
+
+Step 2: Use power series solution about $x_0 = 0$\\
+Therefore, 
+\begin{align}
+  Y(x) &= \sum_{n=0}{\infty}a_nx^n  \\
+  Y'(x) &= \sum_{\infty}{n=0}na_nx^{n-1} \\
+  Y''(x) &= \sum_{n=0}^{\infty}n(n-1)a_nx^(n-2)
+ \end{align}
+ 
+ Plug this back into the ODE to get the recurrence relation
+ below
+ \begin{equation}
+a_{n+2} = \frac{(n-k)(n+k+1)}{(n+2)(n+1)}
+\end{equation}
+
+Solving recurrence relation\\
+
+Odd Index solution
+\begin{align}
+    a_3 &= \frac{a_1(1-k)(2+k)}{3!} \\
+    a_5 &= \frac{a_1(k-3)(k-1)(k+2)(k+4)}{5!} \\
+\end{align}
+
+Polynomial Soln for k(even or odd)
+
+Set $a_k$ to calculate $a_{k-2},a_{k-4}$
+\begin{equation}
+a_n = \frac{(n-k)(n+k+1)}{(n+2)(n+1)} a_n 
+\end{equation}
+replace n by k-2
+\begin{align}
+  a_{k-2k}&= \frac{-1(k)(k-1)}{2(2k-1)} \\
+  a_k &= \frac{-1(2k-2)!}{2^k(k-1)!(k-2)!}
+\end{align}
+Similarly,
+\begin{equation}
+a_{k-4} = \frac{(-1)^2(2k-4)!}{2(2^k)(k-2)!(k-4)!}
+\end{equation}
+    Therefore the general formula
+
+    \begin{equation}
+    a_{k-2m} = \frac{-1^m(2k-m)!}{(m!)(2^k)(k-m)!(k-2m)!}
+  \end{equation}
+
+
+  
+    Therefore
+    \begin{equation}
+      P_k(x) = \sum_{m=0}^{k/2} a_{k-2m}x^{k-2m}
+  \end{equation}
+
+   Properties \\
+    Legendre Polynomials are orthogonal
+    \begin{align}
+    (2n-1)xP_(n-1)(x) = nP(x) + (n-1)P_(n-2)(s) n = 2, 3 ...
+  \end{align}
+
+\subsection{Bessle Legendre Inequalities}
+ \begin{align}
+   \int_{-h}^{0}x(u)Rx(u)du \geq \frac{1}{h}
+   \begin{bmatrix}
+     \omega_0 \\
+     . \\
+     . \\
+     . \\
+     \omega_n
+   \end{bmatrix}
+   R_N
+   \begin{bmatrix}
+  \omega_0 \\
+  . \\
+  . \\
+  . \\
+  \omega_n
+\end{bmatrix}
+ \end{align}
+
+ where R is symmetric positive definite matrix
+ and 
+ \begin{align}
+   R_N &= diag(R,3R,...,(2N+1)R) \\
+   \omega_k&= \int_{-h}^{0}P_k(u)x(u)du, 
+ \end{align}
+ for all natural numbers k and x is a square integrable function
+ from an open interval,I to $R^n$
+\subsection{Lyapunov-Krasovskii Functional}
+Lyapunov-Krasovskii Functional is obtained from the Lyapunov theory which is used to check the stability of a system. The LK functional derivied from the Lyapunov theory thia power system is given below:
+\begin{equation*}
+V(x_t) = \eta ^T (t)P \eta(t) + \int _t-h^t \theta ^T(t,s)Q\theta(t,s)ds 
+\end{equation*}
+\begin{equation*}
+ +\int _{-h} ^0 \int _{t+\theta}^t\diff{x^T(s)}{t}R\diff{x^T}{t}dsd\theta
+\end{equation*}
+\subsection{Prime mover}
+Prime mover in power provides the necessary mechanical input to the steam turbine. It converts power into mechanical input.
+\subsection{Speed governor}
+Speed governor in control system is used to measure or regulate the speed of the steam turbine.
+\section{Controllability and Stability Analysis}
+\subsection{Controllability} The above linear time variant power system is controllable only if the matrix \\
+\begin{equation}
+\begin{bmatrix}
+B & AB & AB^2 
+\end{bmatrix}
+\text{preserves rank}
+\end{equation}
+
+where $t_{0}$ is the initial time \\
+$t_{f}$ is the final time
+Checking the condition for controllability: \\
+We have \\
+
+\begin{equation}
+B =
+\begin{bmatrix}
+0 \\
+ 0 \\
+ \frac{1}{T_{G}}
+\end{bmatrix}
+A =
+\begin{bmatrix}
+\frac{D}{M} & \frac{D}{M} & 0 \\
+ 0 & \frac{-1}{T_{T}} & \frac{1}{T_{T}}\\
+ \frac{-1}{T_{G}R} & 0 & \frac{-1}{T_{G}} \\
+\end{bmatrix} \\
+\end{equation}
+\newline
+\begin{equation}
+AB =
+\begin{bmatrix}
+0 \\
+ \frac{1}{T_{G}T_{T}} \\
+ \frac{1}{T_{G}^2}
+\end{bmatrix}
+A^2B =
+\begin{bmatrix}
+\frac{D}{MT_{G}T_{T}} \\ \\
+ \frac{T_{G} + T_{T}}{T_{G}^2T_{T}^2} \\ \\
+ \frac{1}{T_{G}^2}
+\end{bmatrix}
+\end{equation}
+\\
+\begin{equation}
+\begin{bmatrix}
+B & AB & AB^2 
+\end{bmatrix}
+= 
+\begin{bmatrix}
+0 &  0 & \frac{D}{MT_{G}T_{T}} \\ \\
+0 & \frac{1}{T_{G}T_{T}} & \frac{T_{G} + T_{T}}{T_{G}^2T_{T}^2} \\ \\
+ \frac{1}{T_{G}}  & \frac{1}{T_{G}^2} &  \frac{1}{T_{G}^2}
+\end{bmatrix}
+\end{equation}
+\\
+\begin{equation}
+\text{det}
+\begin{bmatrix}
+B & AB & AB^2 
+\end{bmatrix}
+= \frac{-D}{MT_{G}^3T_{T}^2} \neq 0
+\end{equation}
+Therefore the the matrix $[B \quad AB \quad A^2B]$ preserves rank. Hence, the power system is controllable which simultaneously implies that the system is stabilizable.
+
+\section{System Model and Derivations}
+
+\begin{figure}
+\includegraphics[width=\linewidth]{systemmodel.png}
+  \caption{System}
+  \label{fig:System1}
+\end{figure}
+
+
+The system above controls the frequency of the load(LFC) to some desired output. \\
+
+Whenever there is a change in grid load, the system adjust the frequency for the new load by 
+doing the following.
+
+\begin{enumerate} 
+  \item Generator generates a new frequency 
+  \item Frequency deviation factor($\beta$) is used to get the error
+  \item Error is fed into PID to handle frequency variation
+  \item A control signal is generated to control the governor
+  \item Output is fed into Governor(acts as an actuator) to control valve
+  \item Valve is opened based on signal
+  \item Variation in valve opening causes a desired power change  
+ \end{enumerate}
+From the figure above, the equations of motion can be represented as 
+
+
+\begin{align}
+  \diff{\Delta f}{t} &= \frac{-D}{M}\Delta f + \frac{D}{M}\Delta P_m - \frac{1}{M}\Delta{P_d} \\ \\
+  \diff{\Delta P_m}{t} &= \frac{-\Delta P_m}{T_T} + \frac{P_v}{T_T} \\ \\
+  \diff{\Delta P_v}{t} &= \frac{-1}{T_GR}{\Delta f} - \frac{1}{T_G}{\Delta P_v}  \\ \\
+  ACE(t) &= \Delta f \beta
+\end{align} \\
+
+This can be represented in state space equation as
+\begin{align}
+  \diff{x(t)}{t} &= Ax_o(t) + Bu(t- h(t)) + F(\omega{t}) \\
+  y_o(t) &= Cx_o(t)
+\end{align}
+
+where
+\begin{align}
+  x_o(t) &= [\Delta f \quad  \Delta P_m  \quad \Delta P_v]  \\
+  y_o(t) &= ACE
+\end{align}
+
+\begin{align}
+  A &=
+\begin{bmatrix}
+  \frac{D}{M} & \frac{D}{M} & 0 \\
+  0 & \frac{-1}{T_T} & \frac{1}{T_T} \\
+  \frac{-1}{T_GR} & 0 & \frac{-1}{T_G}
+\end{bmatrix}
+\quad
+  B =
+\begin{bmatrix}
+  0 \\
+  0 \\
+  \frac{1}{T_G}
+\end{bmatrix}
+\\ \\
+  F &=
+\begin{bmatrix}
+  \frac{1}{M} & 0 & 0
+\end{bmatrix}
+\quad
+  C = 
+\begin{bmatrix}
+  \beta & 0 & 0
+\end{bmatrix}
+\end{align}
+
+\begin{equation}
+w(t) = \Delta P_d \quad u(t-h(t)) = \Delta P_c(t)
+\end{equation}
+
+Meaning of Symbols
+\begin{align}
+  \Delta f &-> \text{Variation in system frequency}  \\
+  \Delta P_m &-> \text{Variation in Mechanical Power} \\
+  \Delta P_v &-> \text{Variation in Control Valve Opening} \\
+  ACE(t) &-> \text{Area Controller Error} \\
+  h(t) &-> \text{Delay Stability Margin} \\
+  u(t-h(t)) &-> \text{Input with Delay} \\
+  \Delta P_d &-> \text{Changes in Grid load} \\
+  \Delta P_c &-> \text{Changes in System Control  Signals} \\
+  M &-> \text{Moment of Inertia} \\
+  D &-> \text{Damping Coefficient of generator} \\
+  T_T &-> \text{Inertia time of the Generator of Steam Turbine} \\
+  T_G &-> \text{Inertia time of the Governor of the unit } \\
+  R &-> \text{Speed Drop coefficient of the Governor} \\
+  \beta &-> \text{frequency Deviation Factor} 
+\end{align} 
+
+The PID Controller handles the Area Controller Error(ACE) and produces a feedback 
+using the equation stated as follows
+
+\begin{equation}
+  u(t)=K_pACE(t) + K_I\int ACE(t)dt + K_D \diff{ACE(t)}{dt}
+\end{equation}
+where
+\begin{align}
+  K_I &-> \text{Integral gain}\\
+  K_P &-> \text{Proportional gain} \\
+K_D &->\text{Derivative gain}
+\end{align}
+
+
+The virtual state and output variables can be writen as follows
+\begin{align}
+  \bar{x}_0(t) &= 
+  \begin{bmatrix}
+    x_0^T(t) & \int y_0^T(t) dt
+  \end{bmatrix}^T \\
+  \bar{y}_0(t) &= 
+  \begin{bmatrix}
+    y_0^T(t) & \int y_0^T(t)dt & \diff{y_0^T(t)}{t}
+  \end{bmatrix}^T
+\end{align}
+
+Because CB = 0, we have the transformation
+\begin{align}
+  \diff{\bar{x}}{t} &= \bar{A}\bar{x}_0(t) + \bar{B}u(t-h(t)) + \bar{F}\omega (t) \\
+  \bar{y}_0(t) &= \bar{C}\bar{x}_0(t) + \bar{D}_w\omega(t) \\
+  u(t)&= -K\bar{y}_0(t)
+\end{align}
+
+\begin{align}
+  \diff{\bar{x}_{0}(t)}{t} = \bar{A}\bar{x}_{0}(t) + \bar{A}_{d}\bar{x}_{0}(t-h(t)) + \bar{B}_w\omega(t) \\
+\end{align}
+where $\bar{A}_{d}= -\bar{B}K\bar{C}$ ,$\bar{B}_w = \bar{F} - \bar{B}K\bar{D}_w $\\
+
+Consider an equilibrium point (point for which $\diff{\bar{x}_0(t)}{t} = 0$) at $\bar{x}_0^*(t)$
+Therefore,           
+\begin{equation}
+  0 = \bar{A}\bar{x}_0^*(t) + \bar{A}_d\bar{x}_0^*(t-h(t)) + \bar{B}_w\omega(t)
+\end{equation}
+
+Perfoming State Transformation where $x(t) = \bar{x}(t)-\bar{x}_0^*(t)$, we have
+\begin{equation}
+  \diff{x}{t} = \bar{A}x(t) + \bar{A}_dx(t-h(t)) \\
+\end{equation}
+where 
+\begin{align}
+  \bar{A} &=
+  \begin{bmatrix}
+    \frac{-D}{M} & \frac{1}{M} & 0 & 0 \\
+    0 & \frac{-1}{T_T} & \frac{1}{T_T} & 0 \\
+    \frac{-1}{T_GR} & 0& \frac{-1}{T_G} & 0 \\
+    \beta & 0 & 0 & 0
+  \end{bmatrix} \\
+  \bar{A}_d &=
+  \begin{bmatrix}
+    0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 \\
+    \frac{\beta D K_D}{MT_G} - \frac{\beta K_{P}}{T_G} & \frac{-\beta K_D}{MT_G} & 0 & \frac{-K_1}{T_G} \\
+    0 & 0 & 0 & 0
+  \end{bmatrix}
+\end{align}
+Since the parameters of the power system experience some disturbance, this is accounted for by the following: \\
+ let $\alpha$ be the disturbance deviation for prime mover \\
+ let $\beta$ be the disturbance deviation for Governor \\
+ 
+ Because the values of the deviations are extremely small, we use the percentage error.
+ Therefore,the new value of $T_T$ due to error change can be accounted for as
+
+ \begin{align}
+   T_{Ta} &\epsilon [(1-\alpha \%)T_T, (1+\alpha\%)T_T] \\
+   T_{Ga} &\epsilon [(1-\gamma \%)T_G, (1+\gamma\%)T_G]
+ \end{align}
+ \begin{align}
+   T_{Ta} &-> \text{Inertia time constant for prime mover} \\
+   T_{Ga} &-> \text{Inertia time contant for Governor}
+ \end{align}
+  Given the values above, $T_T$ can be expressed as
+  \begin{align}
+    T_T = \frac{1+\gamma \alpha \%}{(1-\alpha \%)(1+\alpha \%)} T_Ta
+  \end{align}
+  where $\gamma \epsilon [-1\quad1]$ is a constant \\ 
+   
+  We can however write the above equation in a more general form by letting $\gamma$ be function 
+  on the same interval. Therefore we write in a more compact form as follows
+ \begin{align}
+   \frac{1}{T_{Ta}} = \frac{\alpha _1}{T_T} + f_1(t)\frac{\alpha _2}{T_T}\\
+   \frac{1}{T_{Ga}} = \frac{\gamma _1}{T_G} + f_2(t)\frac{\gamma _2}{T_G}
+\end{align}
+ where 
+ \begin{align}
+   f_1(t),&f_2(t) \epsilon  [-1,1] \\
+   \alpha _1 &= \frac{1}{(1-\alpha)(1+\alpha\%)} , \quad \alpha _2 = \alpha\% \alpha _1 \\
+   \gamma _1 &= \frac{1}{(1-\gamma)(1+\gamma\%)} , \quad \gamma _2 = \gamma \%\gamma
+ \end{align}
+
+ Therefore the new equation including delay is 
+\begin{align}
+  \diff{x}{t}=(A_0 + \Delta A_0)x(t) + (A_d + \Delta A_d)(x(t-h(t))),
+ \end{align}
+ where
+ \begin{flalign}
+   &[\Delta A_0 \quad \Delta A_d] = HF(t)[E_1 \quad E_2] \\
+   &H = I  \\
+   F(t) &= diag\{0,f_1(t),f_2(t),0\} \\
+   &A_0 = 
+   \begin{bmatrix}
+     \frac{-D}{M} &\frac{1}{M} &0 &0 \\
+     0 &\frac{-\alpha _1}{T_T} &\frac{\alpha}{T_T} &0 \\
+     -\frac{\gamma}{T_GR} &0 &-\frac{\gamma _1}{T_G} &0 \\
+     \beta& 0 & 0 & 0
+   \end{bmatrix} \\
+   &A_d =
+   \begin{bmatrix}
+     0&0&0 &0 \\
+     0 &0&0&0 \\
+     \frac{\gamma _1 \beta D K_D}{MT_G} - \frac{\gamma _1\beta K_p}{T_G}&0  &-\frac{\gamma _1\beta K_D}{MT_G} &-\frac{\gamma _1 K_1}{T_G} \\
+     0& 0 & 0 & 0
+   \end{bmatrix} \\
+   &E_1=
+   \begin{bmatrix}
+     0&0&0&0 \\
+     0&-\frac{\alpha _2}{T_1} &{\alpha _2}{T_T} &0  \\
+     -\frac{\gamma _2}{T_GR} &0 &\frac{-\gamma _2}{T_G} &0 \\
+     0&0&0&0 
+   \end{bmatrix} \\
+   &E_2 =
+   \begin{bmatrix}
+     0&0&0 &0 \\
+     0 &0&0&0 \\
+     \frac{\gamma _2 \beta D K_D}{MT_G} - \frac{\gamma _2\beta K_p}{T_G}&0 &-\frac{\gamma _2\beta K_D}{MT_G} &-\frac{\gamma _2 K_1}{T_G} \\
+     0& 0 & 0 & 0
+   \end{bmatrix}
+ \end{flalign}
+
+ \subsection{lemma1}
+ let $\omega$ be a differentiable functional:$[a,b] -> R^n$. For a real symmetric matrix $Z>0$ and any real matrix M with appropriate
+ dimensions, the followin inequality holds:
+ \begin{equation}
+   -\int _a^b \diff{w^T}{s}Z\diff{w^T}{s}ds \leq \xi ^T[Sym\{\Pi ^T M\}+(b-a)M^T\widetilde{Z}M]\xi
+ \end{equation}
+ where
+ \begin{align}
+   \widetilde{Z}&=diag\{Z,\quad 3Z,\quad 5Z\} \\
+   \eta&=[\omega (b) \quad \omega \quad (a) \quad \gamma _1 \quad \gamma _2]^T \\
+   \gamma _1 &= \int _a ^b \frac{\omega (s)ds}{b-a} \\
+   \gamma _2 &= \int _a ^b \frac{\omega (s)(b-s)ds}{(b-a)^2} \\
+   H &=
+   \begin{bmatrix}
+     I& -I &0 &0 \\
+     I& I &-2I &0 \\
+     I& -I &-6I &12I
+   \end{bmatrix}
+ \end{align}
+
+ \subsection{lemma2}
+ For any real matrices $Z=Z^T, H$ and E with appropriate dimensions, if the inequality $Z +HFE+E^TF^TH^T<0$ is true, for anymore
+ $F$ that satisfies $F^TF\leq I$, we can obtain the following inequality when a scalar $\lambda > 0$ exists $Z+\lambda HH^T +\lambda ^{-1}E^TE<0$ \\ \\
+ Proof \\ \\
+ Consider $H^T=FE$ and $\lambda =1$ , therefore we have 
+   $Z+HH^T+E^T(F^TF)E<0$.
+Since $F^TF< I$, it implies 
+$Z+HH^T +E^TE<0$ \\ \\
+ Notation To be Used \\ 
+ \begin{align}
+   \theta _0(s) &= [\diff{x^T(s)}{t} x^T(s)]^T \quad  \widetilde{h}(t) = h-h(t) \\ \\
+   v_i &= \int ^t _{t-h(t)} \frac{(t-s)^{i-1}x^T(s)}{h^i(t)}ds \\ \\
+   \omega _i &= \int ^{t-h(t)} _{t-h} \frac{[(t-h(t)-s)]^{i-1}x^T(s)}{\widetilde{h}^i(t)}ds \quad  i= 1,2 \\ \\
+   \varkappa _1 &= \int ^t _{t-h} x^T(s)ds \quad \varkappa _2 =\int ^t _{t-h} (t-s)x^T(s)ds \\ \\
+   \eta _0(t) &= [x^T(t)\quad x^T(t-h)]^T] \\ \\
+   \eta _1(t) &= [x^T(t)\quad x^T(t-h(t)) \quad x^T(t-h)]^T \\ \\ 
+   \eta _2(t) &= [v_1 \quad v_2 \quad \omega _1 \quad \omega _2]^T \\ \\
+   \eta _3(t) &= [h(t)v_1 \quad h(t)v_2 \quad \widetilde{h}(t)\omega _1 \quad \widetilde{h}(t)\omega _2]^T \\ \\
+   \eta _4(t) &= [\diff{x^T}{t}(t-h)  \quad \diff{x^T}{t}]^T \\ \\
+   \eta (t) &=[\eta _0^T(t) \quad \varkappa _1 \quad \varkappa _2]^T  \\ \\
+   \theta(t,s)&=[\theta _0^T(s) \quad \eta _0 ^T(t) \quad \int _{t-h}^s x^T(\theta)d\theta]^T \\ \\
+   \xi (t) &= [\eta _1^T(t) \quad \eta _2^T(t) \quad  \eta _3^T(t) \quad \eta _4^T]^T   \\ \\
+   e_i &= [O_{n(i-1)n}\quad I_n \quad O_{n(13-i)n}] \quad i=1,2,...,13 \\ \\ 
+   \Pi_0&=[h(t)(e_9^T +e_{10}^T) +\widetilde{h}(t)e^T_{11} ]^T 
+ \end{align}
+ \begin{align}
+ \Pi _1 &= [e_1^T \quad e_3^T \quad e_8^T+e_{10}^T \quad \Pi_0^T]^T \\ \\
+ \Pi _2 &= [e_{13}^T \quad e_1^T-e_3^T \quad e_{12}^T \quad e_{8}^T+e_{10}^T \quad -he_3^T]^T \\ \\
+ \Pi _3 &= [e_{13}^T \quad e_1^T \quad e_{1}^T \quad e_{3}^T+e_{8}^T +e_{10}^T]^T \\ \\
+ \Pi _4 &= [e_{12}^T \quad e_3^T \quad e_{1}^T \quad e_{3}^T \quad 0]^T \\ \\
+ \Pi _5 &= [e_{1}^T - e_3^T \quad e_{8}^T + e_{10}^T \quad he_{1}^T \quad he_3^T \quad \Pi _0^T]^T \\ \\
+ \Pi _6 &= [0 \quad 0 \quad e_{13}^T \quad e_{12}^T \quad -e^T_3]^T \\ \\  
+ \Pi _{7a} &= [e_1^T \quad e_2^T \quad e_4^T \quad e_5^T]^T \\ \\
+ \Pi _7 &= [\Pi\quad \Pi _{7a} ]\\ \\
+ \Pi _{8a} &= [e_2^T \quad e_3^T \quad e_6^T \quad e_7^T]^T \\ \\ 
+ \Pi _8 &= [\Pi \quad \Pi _{8a} ] \\ \\
+ \Pi _{9a} &= [e_8^T -h(t)e^T_4 \quad e^T_9 - h(t)e^T_5]^T \\ \\
+ \Pi _{9b} &= [e_{10}^T -\widetilde{h}(t)e^T_6 \quad e^T_{11} - \widetilde{h}(t)e^T_7]^T \\ \\
+ \Pi _{9} &= [\Pi _{9a}^T \quad \Pi _{9b}^T]^T \\ \\
+ \Pi _{10} &= [e^T_{13}X_1+e_1^TX_2 + e_2^TX_3]^T \\ \\
+ \Pi _{11} &= [e^T_{1}A_0^T+e_2^TA_d^T - e_{13}^T]^T \\ \\
+ \theta _1 &= [\Pi _{10}^T \Pi]^T \\ \\
+ \theta _2 &= [e_1^TE_1^T + e_2^TE_2^T]^T \\ \\
+ \Phi _1 &= Sym\{\Pi _1^TP\Pi _2 + \Pi _5^TQ\Pi  _6\}  \\ \\
+         &+ \Pi _3^TQ\Pi _3 - \Pi _4^TQ\Pi _4 + h\diff{x^T(t)}{t}R\diff{x}{t} \\ \\
+ \Phi _2 &= Sym\{\Pi _{10}^T\Pi _{11} + N\Pi _{9}+\Pi  _7^TY_1 +\Pi_8^TY_2\}  \\ \\
+ \Phi _3 &= h(t)Y_1^T\widetilde{R}^{-1}Y_1+\widetilde{h}(t)Y_2^T\widetilde{R}^{-1}Y_2
+ \end{align}
+ $\widetilde{R}=diag\{R \quad 3R \quad 5R\}$
+\section{Robust Stability}
+Theorem1: For a scalar $\lambda > 0$, if there exist real symmetric matrices $P (\in R^{4n*4n}) > 0$, $Q (\in R^{5n*5n}) > 0$,$R (\in R^{n*n}) > 0$ any real matrices $Y_1,Y_2,X_1,X_2,X_3$ and N with appropriate dimensions, the system is stable if the following LMIs and are satisfied for $0 \leqslant h(t) \leqslant h $
+  \begin{align}
+  \begin{bmatrix}
+     \phi(0)&\theta _1^T&hY_2^T\\
+     *&-\lambda I&0\\
+     *& * & -h\bar{R}
+   \end{bmatrix} < 0 \\
+  \begin{bmatrix} \\
+     \phi(h)&\theta _1^T&hY_1^T\\
+     *&-\lambda I&0\\
+     *& * & -h\bar{R}
+   \end{bmatrix} < 0 \\
+ \end{align}
+where $\phi(h(t))=\phi _+ \phi _2 + \lambda \theta _2^T \theta _2$   
+\\
+proof
+From lyapunov theory, an LK functional can be constructed as follows
+\begin{align}
+  V(x_t) = \eta ^T (t)P \eta(t) + \int _t-h^t \theta ^T(t,s)Q\theta(t,s)ds  \\ +\int _{-h} ^0 \int _{t+\theta}^t\diff{x^T(s)}{t}R\diff{x^T}{t}dsd\theta
+\end{align}
+when $P>0$ $Q> 0$ and $R>0$, the LK functional is positive. 
+Therefore,
+\begin{equation}
+  \diff{V(x_t)}{t}= \xi ^T (t)\Phi _1 \xi (t) - \int _{t-h}^t \diff{x^T(s)}{t}R\diff{x(s)}{s} ds
+\end{equation}
+Then 
+ \begin{equation}
+   - \int ^{t-h(t)}_{t-h}\diff{x^T(s)}{s}R\diff{x(s)}{s}ds =
+\end{equation}
+\\
+\begin{equation}
+ -\int^{t-h(t)}_{t-h}\diff{x^T(s)}{s}R\diff{x(s)}{s}ds   -\int^{t}_{t-h(t)}\diff{x^T(s)}{s}R\diff{x(s)}{s}ds
+ \end{equation}
+On applying Lemma 1, we can obtain 
+\begin{equation}
+ -\int^{t}_{t-h(t)}\diff{x^T(s)}{s}R\diff{x(s)}{s}ds \leqslant 
+\end{equation}
+\\
+\begin{equation}
+\xi ^T (t)(Sym{\Pi^{T}_{7}Y_1} + h(t)Y^{T}_{1}\text{\~{R}}^{-1}Y_1)\xi (t)
+\end{equation}
+\\
+\begin{equation}
+-\int^{t-h(t)}_{t-h}\diff{x^T(s)}{s}R\diff{x(s)}{s}ds \leqslant 
+\end{equation}
+\begin{equation}
+\xi ^T (t)(Sym{\Pi^{T}_{8}Y_2} +\text{\~{h(t)}}Y^{T}_{2}\text{\~{R}}^{-1}Y_2)\xi (t)
+\end{equation}
+For any real matrix N with compatible dimensions, the following equation holds 
+\begin{equation}
+2\xi ^T (t)N\Pi_9\xi (t) = 0
+\end{equation}
+Considering any real matrices i X (i=1, 2, 3) with compatible dimensions, the following equation holds 
+\begin{equation}
+0 = 
+\begin{bmatrix}
+-\diff{x(t)}{t} + (A_0 + \Delta{A_0})x(t) \\ \\
++(A_d + \Delta{A_d})x^T(t - h(t)) 
+\end{bmatrix}
+*
+\end{equation}
+\\
+\begin{equation}
+2
+\begin{bmatrix}
+\diff{x^T(t)}{t}X_1 + x^T(t)X_2 + x^T(t - h(t))X_3
+\end{bmatrix}
+\end{equation}
+From
+\begin{equation}
+[\Delta{A_0} \quad \Delta{A_d}] = HF(t)[E_1 \quad E_2]
+\end{equation} 
+, we can have formula (22) transformed into
+\begin{equation}
+\xi ^T (t)(Sym{\Pi^{T}_{10}\Pi_{11} + \theta^{T}_{1}F(t)\theta_2})\xi (t) = 0
+\end{equation}
+Combining formulas (17)-(23), we can easily obtain  
+\begin{equation}
+\diff{V(x_t)}{t}  \leqslant \xi ^T (t)\bar{\Phi}\xi(t)
+\end{equation}
+where
+\begin{equation}
+\bar{\Phi} = \Phi_0 + \theta^{T}_{1}F(t)\theta_2   +   \theta^{T}_{2}(t)F(t)\theta_1
+\end{equation}
+\\
+If
+\begin{equation}
+\bar{\Phi} = \Phi_0 + \theta^{T}_{1}F(t)\theta_2   +   \theta^{T}_{2}(t)F(t)\theta_1   < 0
+\end{equation}
+ is true, and by employing Lemma 2 for a scalar $\lambda$ is greater than 0, we can obtain 
+\begin{equation}
+\Phi_0 + \lambda^-1\theta^{T}_{1}\theta_1 + \lambda\theta^{T}_{2}\theta_2 < 0
+\end{equation}
+The inequality (108) is equivalent to the inequalities (88) and (89) by applying the Schur theorem. Therefore, if the inequalities (88) and (89) are true, we can hold 
+\begin{equation}
+\diff{V(t)}{t} < 0
+\end{equation}
+. Then, the system (80) is stable from Lyapunov stability theory. 
+\\
+Now, we can assume that the time-delay is constant, that is
+\begin{equation}
+\diff{h(t)}{t} = 0
+\end{equation}
+The system (80) is then transformed into the following system 
+\begin{equation}
+ \diff{x}{t}=(A_0 + \Delta A_0)x(t) + (A_d + \Delta A_d)(x(t)-\bar{h})),
+\end{equation}
+where $\bar{h}$ represents a constant time-delay that satisfies
+\begin{equation}
+0  \leqslant \bar{h} \leqslant h
+\end{equation}
+, and other parameters are the same as system (80). We choose the LK functional to be
+\begin{equation}
+\bar{V}(t) = \bar{\eta}^T(t)\bar{P} \bar{\eta}(t) + \int^{t}_{t-h}\bar{\theta}^T(t,s)\bar{Q}\bar{\theta}(t,s)ds 
+\end{equation}
+\\
+\begin{equation}
++ \int^{0}_{-h}\int^{t}_{t + \theta}\diff{x}{s}^T(s)\bar{R}\diff{x}{s}(s)dsd\theta
+\end{equation}
+where 
+$\bar{\eta}(t) = [\bar{e}^{T}_{1} \quad \chi_1 \quad  \chi_2]^T$
+ 
+\begin{equation}
+\bar{\theta}(t,s) = 
+\begin{bmatrix}
+\diff{x}{s}^T(s) \\ \\
+ \eta^{T}_{0}(t) \\ \\
+ \int^{s}_{t-h}x^T(\theta)d\theta \\
+\end{bmatrix}
+\end{equation}
+\begin{equation}
+\bar{\xi}(t) = 
+\begin{bmatrix}
+\eta^{T}_{0}(t) \\ 
+ \frac{\chi_1}{h} \\ 
+ \frac{\chi_1}{h^2} \\
+\diff{x}{t}^T(t - h) \\
+\diff{x}{t}^T(t) \\
+\end{bmatrix}
+\end{equation}
+\begin{equation}
+\bar{e}_i = 
+\begin{bmatrix}
+0_n*(i-1)n & I_n & 0_n*(6-i)n  
+\end{bmatrix}
+i=1,2,...,6
+\end{equation}
+On applying the proposed method, we can derive the following criterion for this functional: 
+\\
+Corollary 1:
+For a scalar $\bar{\lambda} > 0$, if there exist real symmetric matrices
+$\bar{P} \in {R^{4n*4n}}) > 0, \quad  \bar{Q}(\text{$\in {R^{4n*4n}}$}) > 0, \quad \bar{R} (\in {R^{n*n}}) > 0$, and any real matrices $\bar{Y},\bar{X}_1,\bar{X}_2, and \bar{X}_3.$
+with appropriate dimensions, the system (111) is stable if the following LMI (121) is satisfied $0\leqslant\bar{h}\leqslant h$
+\begin{equation}
+\begin{bmatrix}
+\bar{\Phi} & \bar{\theta}^{T}_{1} & h\bar{Y}^{T}_{1} \\
+* & -\lambda I   & 0 \\
+* & * & -h\bar{R}
+\end{bmatrix}
+< 0
+\end{equation}
+where 
+\begin{align}
+\bar{R}1 &= diag[\bar{R} \quad 3\bar{R} \quad 5\bar{R}] \quad \bar{\Phi} = \bar{\Phi}_1+ \bar{\Phi}_2 \\ \\
+\bar{\Phi}_1& = Sym[\bar{\Pi}^{T}_{1}\bar{P}\bar{\Pi}_2 + \bar{\Pi}^{T}_{5}\bar{Q}\bar{\Pi}_{6} + \bar{\Pi}^{T}_{7}\bar{Y} + \bar{\Pi}^{T}_{8}\bar{\Pi}_{9}] \\ \\
+\bar{\Phi}_{2}& = \bar{\Pi}^{T}_{3}\bar{Q}\bar{\Pi}_{3} - \bar{\Pi}^{T}_{4}\bar{Q}\bar{\Pi}_{4} + h\diff{x}{t}^T(t)\bar{R}\diff{x}{t}(t) + \bar{\lambda}\theta^{T}_{2}\theta_2 \\ 
+\bar{\Pi}_{1} &= [\bar{e}^{T}_{1} \quad h\bar{e}^{T}_{3} \quad h^2\bar{e}^{T}_{4}]^T \\ \\ 
+\bar{\Pi}_{2} &= [\bar{e}^{T}_{6} \quad \bar{e}^{T}_{1} \quad -\bar{e}^{T}_{2} \quad h\bar{e}^{T}_{3} \quad -h\bar{e}^{T}_{2} ]^T \\ \\
+\bar{\Pi}_{3} &= [\bar{e}^{T}_{6} \quad \bar{e}^{T}_{1} \quad \bar{e}^{T}_{2} \quad h\bar{e}^{T}_{3}]^T \\ \\ 
+\bar{\Pi}_{4} &= [\bar{e}^{T}_{5} \quad \bar{e}^{T}_{1} \quad \bar{e}^{T}_{2} \quad 0]^T \\ \\
+\bar{\Pi}_{5} &= [\bar{e}^{T}_{1} \quad -\bar{e}^{T}_{2} \quad h\bar{e}^{T}_{1} \quad h\bar{e}^{T}_{2} \quad h^2\bar{e}^{T}_{4}]^T \\ \\
+\bar{\Pi}_{6} &= [0 \quad \bar{e}^{T}_{6} \quad \bar{e}^{T}_{5} \quad -\bar{e}^{T}_{2}]^T \\ \\ 
+\bar{\Pi}_{7a} &= [\bar{e}^{T}_{1} \quad \bar{e}^{T}_{2} \quad \bar{e}^{T}_{3} \quad \bar{e}^{T}_{4}]^T \\ \\ 
+\bar{\Pi}_{7} &= \Pi\bar{\Pi}_{7a} \\ \\
+\bar{\Pi}_{8} &= [\bar{e}^{T}_{6}\bar{X}_{1} + \bar{e}^{T}_{1}\bar{X}_{2}]^T + \bar{e}^{T}_{2}\bar{X}_{3} \\ \\
+\bar{\Pi}_{9} &= [\bar{e}^{T}_{1}\bar{A}^{T}_{0} + \bar{e}^{T}_{2}\bar{A}^{T}_{d}  -\bar{e}^{T}_{6}]^T 
+\end{align}
+The remaining elements and the calculation process are the same as those of Theorem 1.
+\section{Case analysis}
+\begin{enumerate}
+\item Analysed the given power system by deriving the state space equation and performed controllability analysis on the system.
+\item  Analysed the delay in the power systems and tried to increase the upper bound of time delay stability margin. 
+\item Studied the effect of introducing feedback in the form of PID controller in the output to eliminate area control error.
+\item  Derived the new LK functional for the power system using Lyapunov theory.
+\end{enumerate}
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{systemparameters.png}
+  \caption{System Parameters}
+  \label{Table1: System Parameters}
+\end{figure}
+Consider the two controller parameters \\
+\begin{equation}
+K_1 : [K_P \quad K_I \quad K_D]  = [-0.100 0,\quad 0.066 8, \quad 0.053 1]
+\end{equation}
+\begin{equation}
+K_2 : [K_P \quad K_I \quad K_D]  = [-0.403 6,\quad 0.635 6, \quad 0.183 2]
+\end{equation}
+When we set $\alpha =2 $ and $\gamma \in [0,4]$,the random time-delay stability margins in different disturbances of different methods are as listed in Table 2. 
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{stabilitymargin.png}
+  \caption{System Stability Margin for Different methods}
+  \label{Table2: System Stability margin for different methods}
+\end{figure}
+Figure 2 and Figure 3 intuitively show the random time-delay stability margins of the perturbed state obtained by Theorem 1 under different controllers. 
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{stabilitymarginfig1.png}
+  \caption{System Stability Margin for controller K1}
+  \label{Figure 2: System Stability margin for controller K1}
+\end{figure}
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{stabilitymarginfig2.png}
+  \caption{System Stability Margin for controller K2}
+  \label{Figure 3: System Stability margin for controller K2}
+\end{figure}
+Through Table 2, Figure 4 and Figure 5, the following conclusions can be clearly obtained:
+\begin{enumerate} 
+  \item When the same method is used, the usage of different controllers gives rise to significantly different time-delay stability margins. 
+  \item The system time-delay stability margin obtained by the proposed method is obviously superior to that in Ref. [12]. 
+ \end{enumerate}
+To further verify the correctness of the proposed method, Corollary 1 is applied to calculate the constant time-delay stability margin that the system can withstand when the controller is K2, corresponding to 1.290 6 s. \\
+If we assume the load in the region increases by 0.01 pu at 10 s, i.e. $\Delta P_d = 0.01$ pu , then the response curve of the system with different time delays can be derived as shown in Figure 6. \\
+If the load increases at the 10 s, the following frequency deviation response is obtained, as shown in Fig. 4. When the time delay is not considered, the frequency deviation converts to zero by the primary frequency modulation of the speed regulating system and the secondary frequency modulation of LFC, and the grid frequency returns to the regulated value. When the system time delay is 1.29 s, the response time of the system frequency deviation increases, which indicates that the existence of a time delay has an impact on the system stability, although it tends to be stable. When the time delay of the system is 1.30 s, the system diverges and is no longer stable. Therefore, it can be concluded that the time-delay stability margin that the system can withstand is within the interval [1.29 s, 1.30 s], and the stability margin 1.290 6 s obtained by the proposed method is within this interval, indicating the correctness of the proposed method. \\ 
+\begin{figure}[h!]
+\includegraphics[width=\linewidth]{frequencydeviation.png}
+  \caption{ Frequency deviation response of different time delays }
+  \label{ Frequency deviation response of different time delays }
+\end{figure}
+\section{conclusion}
+The time-delay robust stability of a power system with uncertain parameters with PID load frequency control was analyzed in this study. New LK functional derived from the Lyapunov theory was put to test by comparing the results with the existing method used to obtain stability margin. 
+\section{summary}
+Concepts learned
+\begin{enumerate}
+  \item Knowledge on Power Systems - Superficial understanding on power systems
+  \item Controls with Power - Concepts for LTI was applied for controls component(PID)
+  \item LK functional -We didn't finish digesting the paper on LK functional sent to us by Prof Sesan as we were really pressed for time
+\end{enumerate}
+\section{Discussion}
+We made an attempt to use the LMI toolbox, but due to time constraints and complexity of the equation,  the full verification of the above model was not possible.
+\appendices
+\section*{Acknowledgment}
+Thanks to Prof Sesan Iwarere for pointing us in the right direction.
+\section{bibliography}
+ \begin{enumerate} 
+    \item X G Liu, W Wang, H B Zeng, et al. Robust stability analysis of the uncertain time-delay power system. Journal of Hunan University of Technology, 2018,  
+    \item S Boyd, L Ghaoui, E Feron, et al. Linear matrix inequalities in system and control theory. SIAM, Philadelphia, 1994 
+    \item Construction of Lyapunov-Krasovskii functional for time-varying delay systems by Yassine Ariba and Frederic Gouaisbaut
+ \end{enumerate}
+\end{document}

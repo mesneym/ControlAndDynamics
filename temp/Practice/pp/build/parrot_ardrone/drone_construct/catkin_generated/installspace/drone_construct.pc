@@ -1,0 +1,8 @@
+prefix=/home/ak/parrot_ws/install
+
+Name: drone_construct
+Description: Description of drone_construct
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/ak/parrot_ws/install/lib 
+Requires: 

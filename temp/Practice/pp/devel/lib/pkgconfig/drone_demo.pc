@@ -1,0 +1,8 @@
+prefix=/home/ak/parrot_ws/devel
+
+Name: drone_demo
+Description: Description of drone_demo
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/ak/parrot_ws/devel/lib 
+Requires: 

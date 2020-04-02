@@ -1,0 +1,8 @@
+prefix=/home/ak/parrot_ws/devel
+
+Name: custom_teleop
+Description: Description of custom_teleop
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/ak/parrot_ws/devel/lib 
+Requires: 
