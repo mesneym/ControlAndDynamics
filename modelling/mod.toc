@@ -1,0 +1,30 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Motivation}{2}
+\contentsline {paragraph}{}{2}
+\contentsline {paragraph}{}{2}
+\contentsline {section}{\numberline {2}Introduction}{3}
+\contentsline {paragraph}{}{3}
+\contentsline {section}{\numberline {3}Model Design}{3}
+\contentsline {subsection}{\numberline {3.1}workspace}{4}
+\contentsline {section}{\numberline {4}Kinematics}{5}
+\contentsline {subsection}{\numberline {4.1}Foward Kinematics}{5}
+\contentsline {paragraph}{}{6}
+\contentsline {subsection}{\numberline {4.2}Inverse Kinematics}{6}
+\contentsline {paragraph}{}{6}
+\contentsline {paragraph}{}{7}
+\contentsline {section}{\numberline {5}Piercing, and Singularity}{8}
+\contentsline {section}{\numberline {6}Simulation}{9}
+\contentsline {subsection}{\numberline {6.1}Constraints and Design Modifications}{9}
+\contentsline {subsection}{\numberline {6.2}Assumptions}{11}
+\contentsline {subsection}{\numberline {6.3}Scope of Simulation}{12}
+\contentsline {section}{\numberline {7}Vrep Scene}{12}
+\contentsline {subsection}{\numberline {7.1}How the Code Works}{13}
+\contentsline {section}{\numberline {8}Testing and Validation}{14}
+\contentsline {section}{\numberline {9}Results}{16}
+\contentsline {section}{\numberline {10}Conclusion and Future Work}{16}
+\contentsline {section}{\numberline {11}Appendix}{18}
+\contentsline {subsection}{\numberline {11.1}Code for DH Table}{18}
+\contentsline {subsection}{\numberline {11.2}Code for Jacobian}{18}
+\contentsline {subsection}{\numberline {11.3}Simulation components used in Vrep}{20}
+\contentsline {subsection}{\numberline {11.4}Code for Forward Kinematics Test}{20}
+\contentsline {section}{\numberline {12}References}{22}
